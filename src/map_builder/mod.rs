@@ -60,6 +60,11 @@ impl Plugin for MapPlugin
 {
 
     fn build(&self, app: &mut App){
-
+        app
+        .add_state::<GameState>()
+        .add_system(
+            build_map.in_schedule(OnEnter(GameState::Loading))
+        )
+        ;
     }
 }
