@@ -1,5 +1,5 @@
 [package]
-name = "C Side Effect" # ToDo
+name = "c_side_effects" # ToDo
 version = "0.1.0"
 publish = false
 authors = ["TJsurume"]
