@@ -1,28 +1,62 @@
 // disable console on windows for release builds
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+#![warn(clippy::pedantic)]
 
-use bevy::prelude::*;
+mod map_builder;
+mod components;
+mod utils;
+mod audio;
+mod resources;
+mod actions;
+mod loading;
+
+mod prelude {
+    pub use bevy::prelude::*;
+    pub const SCREEN_WIDTH: i32 = 80;
+    pub const SCREEN_HEIGHT: i32 = 80;
+
+    pub use bevy::winit::WinitSettings;
+    pub use crate::map_builder::*;
+    pub use crate::utils::*;
+    pub use crate::audio::*;
+    pub use crate::components::*;
+    pub use crate::resources::*;
+    pub use crate::actions::*;
+    pub use crate::loading::*;
+}
+
 use bevy::window::PrimaryWindow;
 use bevy::winit::WinitWindows;
 use bevy::DefaultPlugins;
 use c_side_effects::GamePlugin;
 use std::io::Cursor;
+
 use winit::window::Icon;
+
+use prelude::*;
 
 fn main() {
     App::new()
         .insert_resource(Msaa::Off)
         .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
-        .add_plugins(DefaultPlugins.set(WindowPlugin {
-            primary_window: Some(Window {
-                title: "Bevy game".to_string(), // ToDo
-                resolution: (800., 600.).into(),
-                canvas: Some("#bevy".to_owned()),
-                ..default()
-            }),
-            ..default()
-        }))
+        // .add_plugins(DefaultPlugins.set(
+        //     WindowPlugin {
+        //         primary_window: Some(Window {
+        //             title: "Bevy game".to_string(), // ToDo
+        //             resolution: (800., 600.).into(),
+        //             canvas: Some("#bevy".to_owned()),
+        //             ..default()
+        //         }),
+
+        //         ..default()
+        //     },
+    
+        // )
+    
+        // )
+        .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_plugin(GamePlugin)
+        .add_plugin(MapPlugin)
         .add_system(set_window_icon.on_startup())
         .run();
 }

@@ -1,6 +1,4 @@
 use crate::actions::Actions;
-use crate::loading::TextureAssets;
-use crate::GameState;
 use crate::prelude::*;
 
 pub struct PlayerPlugin;
