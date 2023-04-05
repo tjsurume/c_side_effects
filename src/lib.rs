@@ -4,8 +4,10 @@ mod loading;
 mod menu;
 mod components;
 mod map_builder;
+mod map;
 mod utils;
 mod resources;
+mod render_utils;
 
 use crate::actions::ActionsPlugin;
 use crate::audio::InternalAudioPlugin;
@@ -14,13 +16,11 @@ use crate::menu::MenuPlugin;
 use crate::components::PlayerPlugin;
 
 use bevy::app::App;
-#[cfg(debug_assertions)]
-use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 
 mod prelude {
     pub use bevy::prelude::*;
-    pub const SCREEN_WIDTH: i32 = 80;
-    pub const SCREEN_HEIGHT: i32 = 80;
+    pub const SCREEN_WIDTH: i32 = 30;
+    pub const SCREEN_HEIGHT: i32 = 30;
 
     pub use bevy::winit::WinitSettings;
     pub use crate::map_builder::*;
@@ -30,6 +30,8 @@ mod prelude {
     pub use crate::resources::*;
     pub use crate::actions::*;
     pub use crate::loading::*;
+    pub use crate::map::*;
+    pub use crate::render_utils::*;
 
 }
 
@@ -41,17 +43,17 @@ pub struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_state::<GameState>()
+        app.add_state::<MyState>()
             .add_plugin(LoadingPlugin)
             .add_plugin(MenuPlugin)
             .add_plugin(ActionsPlugin)
             .add_plugin(InternalAudioPlugin)
-            .add_plugin(PlayerPlugin);
-
-        #[cfg(debug_assertions)]
-        {
-            app.add_plugin(FrameTimeDiagnosticsPlugin::default())
-                .add_plugin(LogDiagnosticsPlugin::default());
-        }
+            .add_plugin(PlayerPlugin)
+            .add_plugin(MapPlugin)
+            .add_system(
+                position_translation
+            )
+            
+            ;
     }
 }

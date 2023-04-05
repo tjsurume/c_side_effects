@@ -1,17 +1,17 @@
 use crate::loading::FontAssets;
-use crate::GameState;
+use crate::MyState;
 use crate::prelude::*;
 
 pub struct MenuPlugin;
 
 /// This plugin is responsible for the game menu (containing only one button...)
-/// The menu is only drawn during the State `GameState::Menu` and is removed when that state is exited
+/// The menu is only drawn during the State `MyState::Menu` and is removed when that state is exited
 impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<ButtonColors>()
-            .add_system(setup_menu.in_schedule(OnEnter(GameState::Menu)))
-            .add_system(click_play_button.in_set(OnUpdate(GameState::Menu)))
-            .add_system(cleanup_menu.in_schedule(OnExit(GameState::Menu)));
+            .add_system(setup_menu.in_schedule(OnEnter(MyState::Menu)))
+            .add_system(click_play_button.in_set(OnUpdate(MyState::Menu)))
+            .add_system(cleanup_menu.in_schedule(OnExit(MyState::Menu)));
     }
 }
 
@@ -70,7 +70,7 @@ fn setup_menu(
 
 fn click_play_button(
     button_colors: Res<ButtonColors>,
-    mut state: ResMut<NextState<GameState>>,
+    mut state: ResMut<NextState<MyState>>,
     mut interaction_query: Query<
         (&Interaction, &mut BackgroundColor),
         (Changed<Interaction>, With<Button>),
@@ -79,7 +79,7 @@ fn click_play_button(
     for (interaction, mut color) in &mut interaction_query {
         match *interaction {
             Interaction::Clicked => {
-                state.set(GameState::Playing);
+                state.set(MyState::Playing);
             }
             Interaction::Hovered => {
                 *color = button_colors.hovered.into();

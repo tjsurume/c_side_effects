@@ -9,6 +9,7 @@ mod audio;
 mod resources;
 mod actions;
 mod loading;
+mod map;
 
 mod prelude {
     pub use bevy::prelude::*;
@@ -23,6 +24,7 @@ mod prelude {
     pub use crate::resources::*;
     pub use crate::actions::*;
     pub use crate::loading::*;
+    pub use crate::map::*;
 }
 
 use bevy::window::PrimaryWindow;
@@ -56,7 +58,7 @@ fn main() {
         // )
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_plugin(GamePlugin)
-        .add_plugin(MapPlugin)
+
         .add_system(set_window_icon.on_startup())
         .run();
 }

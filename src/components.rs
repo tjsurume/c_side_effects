@@ -1,4 +1,3 @@
-use crate::actions::Actions;
 use crate::prelude::*;
 
 pub struct PlayerPlugin;
@@ -6,25 +5,43 @@ pub struct PlayerPlugin;
 #[derive(Component)]
 pub struct Player;
 
-/// This plugin handles player related stuff like movement
-/// Player logic is only active during the State `GameState::Playing`
-impl Plugin for PlayerPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_system(spawn_player.in_schedule(OnEnter(GameState::Playing)))
-            .add_system(move_player.in_set(OnUpdate(GameState::Playing)));
+#[derive(Component)]
+pub struct MapTile;
+
+
+#[derive(Component)]
+pub struct TileSize {
+    pub width: f32,
+    pub height: f32,
+}
+impl TileSize {
+    pub fn square(x: f32) -> Self {
+        Self {
+            width: x,
+            height: x,
+        }
     }
 }
 
-struct Point {
-    x: usize,
-    y: usize,
+
+/// This plugin handles player related stuff like movement
+/// Player logic is only active during the State `MyState::Playing`
+impl Plugin for PlayerPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_system(spawn_player.in_schedule(OnEnter(MyState::Playing)))
+            .add_system(move_player.in_set(OnUpdate(MyState::Playing)));
+    }
 }
-const TILESIZE: usize = 16;
-const POS_SPRITE: Point = Point{x:432/TILESIZE, y:288/TILESIZE};
+
+
+const TILESIZE: i32 = 16;
+const POS_SPRITE: rltk::Point = rltk::Point{x:432/TILESIZE as i32, y:288/TILESIZE as i32};
 fn spawn_player(mut commands: Commands, 
     textures: Res<TextureAssets>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    mut mb: ResMut<MapBuilder>,
 ) {
+    println!("spawn_playerrrrrr");
     let texture_handle: Handle<Image> = textures.tilemap.clone();
     let texture_atlas = 
         TextureAtlas::from_grid(
@@ -39,14 +56,20 @@ fn spawn_player(mut commands: Commands,
         );
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
     
+    let player_start = mb.player_start;
     commands.spawn((
         SpriteSheetBundle {
             texture_atlas: texture_atlas_handle,
             sprite: TextureAtlasSprite::new(24),
-            transform: Transform::from_translation(Vec3::new(0., 0., 1.)),
+            transform: Transform::from_translation(Vec3::new(100., 0., 1.)),
             ..default()
         },
-        ))
+        TileSize::square(1.0),
+        Position { x: player_start.x, y: player_start.y, z: 2 },
+        ),
+
+    
+        )
         .insert(Player);
 
 }
@@ -54,19 +77,30 @@ fn spawn_player(mut commands: Commands,
 
 fn move_player(
     time: Res<Time>,
-    actions: Res<Actions>,
-    mut player_query: Query<&mut Transform, With<Player>>,
+    keyboard_input: Res<Input<KeyCode>>,
+    player_position: Query<(Entity, &Position), With<Player>>,
 ) {
-    if actions.player_movement.is_none() {
-        return;
-    }
-    let speed = 150.;
-    let movement = Vec3::new(
-        actions.player_movement.unwrap().x * speed * time.delta_seconds(),
-        actions.player_movement.unwrap().y * speed * time.delta_seconds(),
-        0.,
-    );
-    for mut player_transform in &mut player_query {
-        player_transform.translation += movement;
+
+
+    let (player_ent, mut pos) = player_position.single();
+    let key = keyboard_input.get_pressed().next().cloned();
+
+    let mut new_position = pos.clone();
+
+    if let Some(key) = key {
+
+        match key {
+            KeyCode::Left => new_position.x -= 1,
+            KeyCode::Right => new_position.x += 1,
+            KeyCode::Down => new_position.y -= 1,
+            KeyCode::Up => new_position.y += 1,
+            _ => {}
+        }
+
+        if new_position != *pos {
+            // pos = &new_position;
+            // println!("{:?}", new_position);
+        }
+
     }
 }

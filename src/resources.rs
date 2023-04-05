@@ -4,7 +4,7 @@ use crate::prelude::*;
 // See https://bevy-cheatbook.github.io/programming/states.html
 // Or https://github.com/bevyengine/bevy/blob/main/examples/ecs/state.rs
 #[derive(States, Default, Clone, Eq, PartialEq, Debug, Hash)]
-pub enum GameState {
+pub enum MyState {
     // During the loading State the LoadingPlugin will load our assets
     #[default]
     Loading,

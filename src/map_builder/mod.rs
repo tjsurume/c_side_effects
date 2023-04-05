@@ -1,45 +1,34 @@
+use crate::actions::Actions;
 use crate::prelude::*;
 
-mod map;
-pub use map::*;
+use rltk::*;
 
+mod prefab;
+use prefab::PrefabArchitect;
 
 trait MapArchitect {
     fn new(&mut self) -> MapBuilder;
 
 }
 
-#[derive(Resource)]
+#[derive(Resource, Debug)]
 pub struct MapBuilder {
     pub map: Map,
-    walls: Vec<Rect>,
-    rooms: Vec<Rect>,
-    pub player_Start: Position
+    walls: Vec<rltk::Rect>,
+    rooms: Vec<rltk::Rect>,
+    pub amulet_start: Position,
+    pub player_start: Position,
 }
 
 impl MapBuilder {
     pub fn new() -> Self 
     {
-        Box::new(SampleArchitect{}).new()
+        Box::new(PrefabArchitect{}).new()
     }
 
-}
-
-
-struct SampleArchitect {}
-
-
-impl MapArchitect for SampleArchitect {
-
-    fn new(&mut self) -> MapBuilder 
-    {
-        let mut mb = MapBuilder {
-            map : Map::new(),
-            rooms: Vec::new(),
-            walls: Vec::new(),
-            player_Start: Position::new(0, 0, 0),
-        };
-        mb
+    
+    fn fill(&mut self, tile:TileType) {
+        self.map.tiles.iter_mut().for_each(|t| *t = tile);
     }
 
 }
@@ -52,18 +41,24 @@ pub fn build_map(
 )
 {
     let mut mb = MapBuilder::new();
+
+    let farer_position = mb.amulet_start;
+    let idx = mb.map.point2d_to_index(farer_position.into());
+    mb.map.tiles[idx] = TileType::Exit;
+
     commands.insert_resource(mb);
 }
 
 pub struct MapPlugin;
 impl Plugin for MapPlugin
 {
-
     fn build(&self, app: &mut App){
         app
-        .add_state::<GameState>()
         .add_system(
-            build_map.in_schedule(OnEnter(GameState::Loading))
+            build_map.in_schedule(OnEnter(MyState::Loading))
+        )
+        .add_system(
+            spawn_map_tiles.in_schedule(OnExit(MyState::Loading))
         )
         ;
     }
