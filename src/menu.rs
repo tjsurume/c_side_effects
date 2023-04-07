@@ -38,7 +38,7 @@ fn setup_menu(
     commands.spawn(
         Camera2dBundle{
             projection: OrthographicProjection{
-                scale: 0.2,
+                scale: 0.5,
                 ..default()
             },
             ..default()

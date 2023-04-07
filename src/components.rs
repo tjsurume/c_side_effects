@@ -48,7 +48,6 @@ fn spawn_player(mut commands: Commands,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
     mut mb: ResMut<MapBuilder>,
 ) {
-    println!("spawn_playerrrrrr");
     let texture_handle: Handle<Image> = textures.tilemap.clone();
     let texture_atlas = 
         TextureAtlas::from_grid(
@@ -65,20 +64,14 @@ fn spawn_player(mut commands: Commands,
     
     let player_start = mb.player_start;
     commands.spawn((
-        SpriteBundle {
-            sprite: Sprite {
-                color: Color::YELLOW,
-                custom_size: Some(Vec2::new(1.0, 1.0)),
-                ..Default::default()
-            },
-            ..Default::default()
-        },
-        // SpriteSheetBundle {
-        //     texture_atlas: texture_atlas_handle,
-        //     sprite: TextureAtlasSprite::new(24),
-        //     transform: Transform::from_translation(Vec3::new(100., 0., 1.)),
-        //     ..default()
+
         // },
+        SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle,
+            sprite: TextureAtlasSprite::new(24),
+            transform: Transform::from_translation(Vec3::new(100., 0., 1.)),
+            ..default()
+        },
         TileSize::square(1.0),
         Position { x: player_start.x, y: player_start.y, z: 2 },
         ),

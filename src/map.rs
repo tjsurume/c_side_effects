@@ -128,13 +128,33 @@ pub fn map_idx(x: i32, y: i32) -> usize {
     ((y*SCREEN_WIDTH) + x) as usize
 }
 
+
+const TILESIZE: i32 = 16;
+const POS_SPRITE: rltk::Point = rltk::Point{x:432/TILESIZE as i32, y:288/TILESIZE as i32};
+
 pub fn spawn_map_tiles(
     mut commands: Commands,
     mb: Res<MapBuilder>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
     textures: Res<TextureAssets>,
 ) {
     println!("{:?}", mb.map.tiles);
-            
+    let texture_handle: Handle<Image> = textures.tilemap.clone();
+
+    let texture_atlas = 
+    TextureAtlas::from_grid(
+        texture_handle, 
+        Vec2::new(
+            TILESIZE as f32,
+            TILESIZE as f32
+        ),
+        POS_SPRITE.x as usize,
+        POS_SPRITE.y as usize,
+        None, None
+    );
+    let texture_atlas_handle = texture_atlases.add(texture_atlas);
+
+
     for y in 0..SCREEN_HEIGHT {
         for x in 0..SCREEN_WIDTH {
             
@@ -144,14 +164,15 @@ pub fn spawn_map_tiles(
                     TileType::Floor => 
                     {
                         commands
-                        .spawn(SpriteBundle {
-                            sprite: Sprite {
-                                color: Color::BLUE,
-                                custom_size: Some(Vec2::new(1.0, 1.0)),
-                                ..Default::default()
-                            },
-                            ..Default::default()
-                        })
+                        .spawn(
+                        SpriteSheetBundle {
+                            texture_atlas: texture_atlas_handle.clone(),
+                            sprite: TextureAtlasSprite::new((1*POS_SPRITE.x +1)  as usize),
+                            transform: Transform::from_translation(Vec3::new(100., 0., 1.)),
+                            ..default()
+                        },
+
+                        )
                         .insert(MapTile)
                         .insert(Position { x: x, y: y, z: 1 })
                         .insert(TileSize::square(1.0));
@@ -165,27 +186,13 @@ pub fn spawn_map_tiles(
                                 MapTile,
                                 TileSize::square(1.0),
                                 Position { x, y, z: 0 },
-                                SpriteBundle {
-                                sprite: Sprite {
-                                    color: Color::PINK,
-                                    custom_size: Some(Vec2::new(1.0, 1.0)),
-                                    ..Default::default()
-                                },
-                                ..Default::default()
-                            }));
-                        commands
-                            .spawn((
-                                MapTile,
-                                TileSize::square(1.0),
-                                Position { x, y, z: 1 },
                                 SpriteSheetBundle {
-                                sprite: TextureAtlasSprite {
-                                    color: Color::YELLOW,
-                                    custom_size: Some(Vec2::new(1.0, 1.0)),
-                                    ..Default::default()
+                                    texture_atlas: texture_atlas_handle.clone(),
+                                    sprite: TextureAtlasSprite::new((10*POS_SPRITE.x +22)  as usize),
+                                    transform: Transform::from_translation(Vec3::new(100., 0., 1.)),
+                                    ..default()
                                 },
-                                ..Default::default()
-                            }));
+                            ));
                     }
                     TileType::Void => ()
                 }
