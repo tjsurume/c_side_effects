@@ -8,6 +8,7 @@ mod map;
 mod utils;
 mod resources;
 mod render_utils;
+mod systems;
 
 use crate::actions::ActionsPlugin;
 use crate::audio::InternalAudioPlugin;
@@ -32,6 +33,7 @@ mod prelude {
     pub use crate::loading::*;
     pub use crate::map::*;
     pub use crate::render_utils::*;
+    pub use crate::systems::*;
 
 }
 
@@ -50,6 +52,7 @@ impl Plugin for GamePlugin {
             .add_plugin(InternalAudioPlugin)
             .add_plugin(PlayerPlugin)
             .add_plugin(MapPlugin)
+            .add_plugin(SystemsPlugin)
             .add_system(
                 position_translation
             )

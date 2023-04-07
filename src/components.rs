@@ -23,6 +23,13 @@ impl TileSize {
     }
 }
 
+#[derive(Component, Clone, Copy)]
+pub struct WantsToMove {
+    pub entity: Entity,
+    pub destination: Position
+}
+
+
 
 /// This plugin handles player related stuff like movement
 /// Player logic is only active during the State `MyState::Playing`
@@ -58,12 +65,20 @@ fn spawn_player(mut commands: Commands,
     
     let player_start = mb.player_start;
     commands.spawn((
-        SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle,
-            sprite: TextureAtlasSprite::new(24),
-            transform: Transform::from_translation(Vec3::new(100., 0., 1.)),
-            ..default()
+        SpriteBundle {
+            sprite: Sprite {
+                color: Color::YELLOW,
+                custom_size: Some(Vec2::new(1.0, 1.0)),
+                ..Default::default()
+            },
+            ..Default::default()
         },
+        // SpriteSheetBundle {
+        //     texture_atlas: texture_atlas_handle,
+        //     sprite: TextureAtlasSprite::new(24),
+        //     transform: Transform::from_translation(Vec3::new(100., 0., 1.)),
+        //     ..default()
+        // },
         TileSize::square(1.0),
         Position { x: player_start.x, y: player_start.y, z: 2 },
         ),
@@ -76,6 +91,7 @@ fn spawn_player(mut commands: Commands,
 
 
 fn move_player(
+    mut commands: Commands,
     time: Res<Time>,
     keyboard_input: Res<Input<KeyCode>>,
     player_position: Query<(Entity, &Position), With<Player>>,
@@ -98,6 +114,7 @@ fn move_player(
         }
 
         if new_position != *pos {
+            commands.spawn(WantsToMove{entity: player_ent, destination: new_position});
             // pos = &new_position;
             // println!("{:?}", new_position);
         }
