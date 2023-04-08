@@ -44,8 +44,11 @@ impl Map {
         let position = position.into();
         self.in_bounds(position) && (
             self.tiles[map_idx(position.x, position.y)] == TileType::Floor ||
-            self.tiles[map_idx(position.x, position.y)] == TileType::Exit
-        )
+            self.tiles[map_idx(position.x, position.y)] == TileType::Exit ||
+            self.tiles[map_idx(position.x, position.y)] == TileType::Wall
+            
+        ) 
+
     }
 
 

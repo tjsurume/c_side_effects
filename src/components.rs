@@ -6,7 +6,11 @@ use crate::prelude::*;
 pub struct PlayerPlugin;
 
 #[derive(Component)]
-pub struct Player;
+pub struct Player
+{
+    pub is_ghost : bool
+}
+
 
 #[derive(Component)]
 pub struct Item;
@@ -102,7 +106,7 @@ fn spawn_player(
         Position { x: player_start.x, y: player_start.y, z: 2 },
         ),
         )
-        .insert(Player);
+        .insert(Player{ is_ghost : true});
 
 }
 
