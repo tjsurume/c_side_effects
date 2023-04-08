@@ -35,14 +35,16 @@ fn setup_menu(
     font_assets: Res<FontAssets>,
     button_colors: Res<ButtonColors>,
 ) {
-    commands.spawn(
+    commands.spawn((
         Camera2dBundle{
             projection: OrthographicProjection{
                 scale: 0.5,
                 ..default()
             },
             ..default()
-        }
+        },
+        MyGameCamera,
+    )
     );
     commands
         .spawn(ButtonBundle {

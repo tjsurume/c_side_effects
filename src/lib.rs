@@ -54,7 +54,7 @@ impl Plugin for GamePlugin {
             .add_plugin(MapPlugin)
             .add_plugin(SystemsPlugin)
             .add_system(
-                position_translation
+                position_translation.in_set(OnUpdate(MyState::Playing))
             )
             
             ;

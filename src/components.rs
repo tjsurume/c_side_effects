@@ -50,6 +50,9 @@ pub struct Point {
     pub y: i32,
 }
 
+#[derive(Component)]
+pub struct MyGameCamera;
+
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app

@@ -6,7 +6,9 @@ struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app
-            .add_system(movements::movement)
+            .add_system(movements::movement.in_set(OnUpdate(MyState::Playing)))
+            .add_system(movements::camera_movement.in_set(OnUpdate(MyState::Playing)))
+            
             ;
     }
 }

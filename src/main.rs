@@ -39,7 +39,6 @@ use prelude::*;
 
 fn main() {
     App::new()
-        .insert_resource(Msaa::Off)
         .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
         // .add_plugins(DefaultPlugins.set(
         //     WindowPlugin {
