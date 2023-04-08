@@ -9,12 +9,14 @@ mod utils;
 mod resources;
 mod render_utils;
 mod systems;
+mod gametime;
 
 use crate::actions::ActionsPlugin;
 use crate::audio::InternalAudioPlugin;
 use crate::loading::LoadingPlugin;
 use crate::menu::MenuPlugin;
 use crate::components::PlayerPlugin;
+use crate::gametime::GameTimePlugin;
 
 use bevy::app::App;
 
@@ -34,6 +36,7 @@ mod prelude {
     pub use crate::map::*;
     pub use crate::render_utils::*;
     pub use crate::systems::*;
+    pub use crate::gametime::*;
 
 }
 
@@ -53,6 +56,7 @@ impl Plugin for GamePlugin {
             .add_plugin(PlayerPlugin)
             .add_plugin(MapPlugin)
             .add_plugin(SystemsPlugin)
+            .add_plugin(GameTimePlugin)
             .add_system(
                 position_translation.in_set(OnUpdate(MyState::Playing))
             )
