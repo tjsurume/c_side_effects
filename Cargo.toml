@@ -61,7 +61,7 @@ image = { version = "0.24", default-features = false }
 
 # additional for rogue
 # smallvec = "1.10.0"
-bracket-lib = "0.8"
+# bracket-lib = "0.8"
 # rltk = "0.8.7"
 
 [build-dependencies]

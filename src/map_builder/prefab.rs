@@ -1,6 +1,3 @@
-use bracket_lib::prelude::*;
-use bracket_lib::terminal::Rect;
-
 
 use crate::prelude::*;
 use super::MapArchitect;
@@ -49,62 +46,25 @@ impl PrefabArchitect
 {
     fn apply_prefab(&self, mb: &mut MapBuilder) 
     {
-        let mut placement = None;
-    
-        let dijkstra_map = DijkstraMap::new(
-            SCREEN_WIDTH,
-            SCREEN_HEIGHT,
-            &vec![mb.map.point2d_to_index(mb.player_start.into())],
-            &mb.map,
-            1024.0
-        );
-    
-        let mut attempts = 0;
-        while placement.is_none() && attempts < 10 {
-            let dimensions = Rect::with_size(
-                0,
-                0,
-                FORTRESS.1,
-                FORTRESS.2
-            );
-    
-            let mut can_place = true;
-            dimensions.for_each(|pt| {
-                let idx = mb.map.point2d_to_index(pt);
-                let distance = dijkstra_map.map[idx];
-                if distance < 2000.0 && distance > 20.0 && mb.amulet_start != pt.into() {
-                    can_place = true;
-                }
-            });
-    
-            if can_place {
-                placement = Some(Point::new(dimensions.x1, dimensions.y1));
-                // let points = dimensions.point_set();
-            }
-            attempts += 1;
-        }
-        println!("Pressxee");
-        println!("{:?}",  placement);
-        if let Some(placement) = placement {
-            println!("Replaceee");
-            let string_vec : Vec<char> = FORTRESS.0
-                .chars().filter(|a| *a != '\r' && *a !='\n')
-                .collect();
-            let mut i = 0;
-            for ty in placement.y .. placement.y + FORTRESS.2 {
-                for tx in placement.x .. placement.x + FORTRESS.1 {
-                    let idx = map_idx(tx, ty);
-                    let c = string_vec[i];
-                    match c {
-                        'M' => {
-                            mb.map.tiles[idx] = TileType::Floor;
-                        }
-                        '-' => mb.map.tiles[idx] = TileType::Floor,
-                        '#' => mb.map.tiles[idx] = TileType::Wall,
-                        _ => println!("No idea what to do with [{}]", c)
+
+
+        let string_vec : Vec<char> = FORTRESS.0
+            .chars().filter(|a| *a != '\r' && *a !='\n')
+            .collect();
+        let mut i = 0;
+        for ty in 0 .. FORTRESS.2 {
+            for tx in  0 .. FORTRESS.1 {
+                let idx = map_idx(tx, ty);
+                let c = string_vec[i];
+                match c {
+                    'M' => {
+                        mb.map.tiles[idx] = TileType::Floor;
                     }
-                    i += 1;
+                    '-' => mb.map.tiles[idx] = TileType::Floor,
+                    '#' => mb.map.tiles[idx] = TileType::Wall,
+                    _ => println!("No idea what to do with [{}]", c)
                 }
+                i += 1;
             }
         }
     }

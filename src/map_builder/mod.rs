@@ -1,9 +1,6 @@
 use crate::prelude::*;
 
-// use rltk::*;
-
 mod prefab;
-use bracket_lib::prelude::Algorithm2D;
 use prefab::PrefabArchitect;
 
 trait MapArchitect {
@@ -40,9 +37,6 @@ pub fn build_map(
     let mut mb = MapBuilder::new();
 
     let farer_position = mb.amulet_start;
-    let idx = mb.map.point2d_to_index(farer_position.into());
-    mb.map.tiles[idx] = TileType::Exit;
-
     commands.insert_resource(mb);
 }
 

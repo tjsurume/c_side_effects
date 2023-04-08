@@ -1,4 +1,4 @@
-use bracket_lib::terminal::*;
+// use bracket_lib::terminal::*;
 use rand::Rng;
 
 use crate::prelude::*;
@@ -43,6 +43,12 @@ pub struct MyStatus {
     pub time : u32,
 }
 
+
+#[derive(Eq, PartialEq, Copy, Clone, Debug)]
+pub struct Point {
+    pub x: i32,
+    pub y: i32,
+}
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
