@@ -5,13 +5,16 @@ pub fn movement(
     mb: ResMut<MapBuilder>,
     move_messages: Query<(Entity, &WantsToMove)>,
     mut movers: Query<(Entity, &mut Position, With<Player>)>,
+    our_clock : ResMut<OurClock>,
 ) {
     // for every message to move
     for (message_ent, move_signal) in move_messages.iter() {
-        if mb.map.can_enter_tile(move_signal.destination) {
-            if let Ok((_, mut position, _)) = movers.get_mut(move_signal.entity) {
-                position.x = move_signal.destination.x;
-                position.y = move_signal.destination.y;
+        if our_clock.state == MyTimeState::Playing {
+            if mb.map.can_enter_tile(move_signal.destination) {                
+                if let Ok((_, mut position, _)) = movers.get_mut(move_signal.entity) {
+                    position.x = move_signal.destination.x;
+                    position.y = move_signal.destination.y;
+                }
             }
         }
         // delete the message

@@ -61,7 +61,6 @@ impl Plugin for PlayerPlugin {
             .add_system(move_player.in_set(OnUpdate(MyState::Playing)))
             .add_system(spawn_item.in_schedule(OnEnter(MyState::Playing)))
             .add_system(get_item.in_set(OnUpdate(MyState::Playing)))
-            .add_system(setup_status.in_schedule(OnEnter(MyState::Playing)))
             ;
     }
 }
@@ -151,34 +150,6 @@ fn spawn_item(
 
 }
 
-fn setup_status(
-    mut commands: Commands, 
-    font_assets: Res<FontAssets>,
-)
-{
-    let text_style = bevy::prelude::TextStyle {
-        font: font_assets.fira_sans.clone(),
-        font_size: 36.0,
-        color: Color::WHITE,
-    };
-
-
-    commands
-    .spawn(
-        Text2dBundle {
-            transform: Transform {
-                translation: Vec3::from((0f32, 50f32, 2f32)),
-                rotation: Quat::from_rotation_z(0.0f32),
-                scale: Vec3::new(1f32, 1f32, 1f32),
-            },
-            text:  Text::from_section("Now Loading", text_style),
-            ..default()
-        }
-    )
-    ;
-
-}
-
 
 fn get_item(
     mut commands: Commands, 
@@ -201,7 +172,7 @@ fn get_item(
 
 fn move_player(
     mut commands: Commands,
-    keyboard_input: Res<bevy::prelude::Input<KeyCode>>,
+    keyboard_input: Res<Input<KeyCode>>,
     player_position: Query<(Entity, &Position), With<Player>>,
 ) {
     let (player_ent, pos) = player_position.single();
@@ -210,7 +181,6 @@ fn move_player(
     let mut new_position = pos.clone();
 
     if let Some(key) = key {
-
         match key {
             KeyCode::Left => new_position.x -= 1,
             KeyCode::Right => new_position.x += 1,
