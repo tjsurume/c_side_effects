@@ -1,5 +1,7 @@
+use bracket_lib::terminal::Point;
+
 use crate::prelude::*;
-use rltk::Point;
+// use rltk::Point;
 
 #[derive(Component, Copy, Clone, PartialEq, Eq, Debug)]
 pub struct Position {

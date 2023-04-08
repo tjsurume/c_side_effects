@@ -1,9 +1,9 @@
-use crate::actions::Actions;
 use crate::prelude::*;
 
-use rltk::*;
+// use rltk::*;
 
 mod prefab;
+use bracket_lib::prelude::Algorithm2D;
 use prefab::PrefabArchitect;
 
 trait MapArchitect {
@@ -14,8 +14,6 @@ trait MapArchitect {
 #[derive(Resource, Debug)]
 pub struct MapBuilder {
     pub map: Map,
-    walls: Vec<rltk::Rect>,
-    rooms: Vec<rltk::Rect>,
     pub amulet_start: Position,
     pub player_start: Position,
 }
@@ -37,7 +35,6 @@ impl MapBuilder {
 
 pub fn build_map(
     mut commands: Commands,
-    player_q: Query<&Player>
 )
 {
     let mut mb = MapBuilder::new();

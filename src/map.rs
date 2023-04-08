@@ -1,14 +1,11 @@
 use crate::prelude::*;
-use bevy_asset_loader::prelude::*;
-
 // use rltk::*;
-use rltk::Point;
-use rltk::BaseMap;
-use rltk::DistanceAlg;
+// use rltk::Point;
+// use rltk::BaseMap;
+// use rltk::DistanceAlg;
 
 
-use smallvec::*;
-use bevy::render::view::Visibility;
+// use smallvec::*;
 
 const NUM_TILES: usize = (SCREEN_WIDTH * SCREEN_HEIGHT) as usize;
 
@@ -52,19 +49,19 @@ impl Map {
     }
 
     // checks if another entity like an enemy or player, are already in that cell
-    pub fn is_tile_occupied<T: Into<Position>> (&self, position: T) -> bool {
-        let position = position.into();
-        self.in_bounds(position)
-            && self.occupation[map_idx(position.x, position.y)] == None
-    }
+    // pub fn is_tile_occupied<T: Into<Position>> (&self, position: T) -> bool {
+    //     let position = position.into();
+    //     self.in_bounds(position)
+    //         && self.occupation[map_idx(position.x, position.y)] == None
+    // }
 
-    pub fn try_idx(&self, position: Position) -> Option<usize> {
-        if !self.in_bounds(position) {
-            None
-        } else {
-            Some(map_idx(position.x, position.y))
-        }
-    }
+    // pub fn try_idx(&self, position: Position) -> Option<usize> {
+    //     if !self.in_bounds(position) {
+    //         None
+    //     } else {
+    //         Some(map_idx(position.x, position.y))
+    //     }
+    // }
 
     fn valid_exit(&self, loc: Point, delta: Point) -> Option<usize> {
         let destination = loc + delta;
@@ -81,7 +78,8 @@ impl Map {
     }
 }
 
-use rltk::Algorithm2D;
+use bracket_lib::{terminal::{Point, DistanceAlg}, prelude::{SmallVec, Algorithm2D, BaseMap}};
+// use rltk::Algorithm2D;
 impl Algorithm2D for Map {
     fn dimensions(&self) -> Point {
         Point::new(SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -130,7 +128,7 @@ pub fn map_idx(x: i32, y: i32) -> usize {
 
 
 const TILESIZE: i32 = 16;
-const POS_SPRITE: rltk::Point = rltk::Point{x:432/TILESIZE as i32, y:288/TILESIZE as i32};
+const POS_SPRITE: Point = Point{x:432/TILESIZE as i32, y:288/TILESIZE as i32};
 
 pub fn spawn_map_tiles(
     mut commands: Commands,
@@ -158,28 +156,24 @@ pub fn spawn_map_tiles(
     for y in 0..SCREEN_HEIGHT {
         for x in 0..SCREEN_WIDTH {
             
+            commands
+            .spawn(
+            SpriteSheetBundle {
+                texture_atlas: texture_atlas_handle.clone(),
+                sprite: TextureAtlasSprite::new((1*POS_SPRITE.x +1)  as usize),
+                transform: Transform::from_translation(Vec3::new(100., 0., 0.3)),
+                ..default()
+            },
+            )
+            .insert(MapTile)
+            .insert(Position { x: x, y: y, z: 0 })
+            .insert(TileSize::square(1.0));
+
             let idx = map_idx(x, y);
                 match mb.map.tiles[idx] 
                 {
-                    TileType::Floor => 
-                    {
-                        commands
-                        .spawn(
-                        SpriteSheetBundle {
-                            texture_atlas: texture_atlas_handle.clone(),
-                            sprite: TextureAtlasSprite::new((1*POS_SPRITE.x +1)  as usize),
-                            transform: Transform::from_translation(Vec3::new(100., 0., 1.)),
-                            ..default()
-                        },
-
-                        )
-                        .insert(MapTile)
-                        .insert(Position { x: x, y: y, z: 1 })
-                        .insert(TileSize::square(1.0));
-
-                    }
-                    
-                    tile_type @ (TileType::Wall | TileType::Exit) =>
+                    TileType::Floor => (),
+                    TileType::Wall =>
                     {
                             commands
                             .spawn((
@@ -194,6 +188,7 @@ pub fn spawn_map_tiles(
                                 },
                             ));
                     }
+                    TileType::Exit => (),
                     TileType::Void => ()
                 }
         }

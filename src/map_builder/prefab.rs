@@ -1,9 +1,13 @@
+use bracket_lib::prelude::*;
+use bracket_lib::terminal::Rect;
+
+
 use crate::prelude::*;
 use super::MapArchitect;
 
-use crate::prelude::*;
-use rand::Rng;
-use rltk::*;
+// use bracket_lib::;
+// use rltk::*;
+// use rltk::*;
 
 const FORTRESS : (&str, i32, i32) = ("
 ------------
@@ -30,15 +34,11 @@ impl MapArchitect for PrefabArchitect
     {
         let mut mb = MapBuilder{
             map : Map::new(),
-            rooms: Vec::new(),
-            walls: Vec::new(),
             player_start : Position::new(0, 0, 0),
             amulet_start : Position::new(0, 0, 0),
         };
 
         mb.fill(TileType::Wall);
-        let center = Position::new_from2d(SCREEN_WIDTH /2, SCREEN_HEIGHT/2);
-
         mb.player_start = Position{x:2, y:2, z: 0};
         self.apply_prefab(&mut mb);
         mb
@@ -61,7 +61,7 @@ impl PrefabArchitect
     
         let mut attempts = 0;
         while placement.is_none() && attempts < 10 {
-            let dimensions = rltk::Rect::with_size(
+            let dimensions = Rect::with_size(
                 0,
                 0,
                 FORTRESS.1,
@@ -79,7 +79,7 @@ impl PrefabArchitect
     
             if can_place {
                 placement = Some(Point::new(dimensions.x1, dimensions.y1));
-                let points = dimensions.point_set();
+                // let points = dimensions.point_set();
             }
             attempts += 1;
         }
