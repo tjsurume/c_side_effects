@@ -10,6 +10,7 @@ mod resources;
 mod render_utils;
 mod systems;
 mod gametime;
+mod status_view;
 
 use crate::actions::ActionsPlugin;
 use crate::audio::InternalAudioPlugin;
@@ -17,6 +18,7 @@ use crate::loading::LoadingPlugin;
 use crate::menu::MenuPlugin;
 use crate::components::PlayerPlugin;
 use crate::gametime::GameTimePlugin;
+use crate::status_view::StatusViewPlugin;
 
 use bevy::app::App;
 
@@ -37,6 +39,7 @@ mod prelude {
     pub use crate::render_utils::*;
     pub use crate::systems::*;
     pub use crate::gametime::*;
+    pub use crate::status_view::*;
 
 }
 
@@ -57,6 +60,7 @@ impl Plugin for GamePlugin {
             .add_plugin(MapPlugin)
             .add_plugin(SystemsPlugin)
             .add_plugin(GameTimePlugin)
+            .add_plugin(StatusViewPlugin)
             .add_system(
                 position_translation.in_set(OnUpdate(MyState::Playing))
             )

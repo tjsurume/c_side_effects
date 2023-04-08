@@ -62,7 +62,6 @@ impl Plugin for PlayerPlugin {
             .add_system(spawn_item.in_schedule(OnEnter(MyState::Playing)))
             .add_system(get_item.in_set(OnUpdate(MyState::Playing)))
             .add_system(setup_status.in_schedule(OnEnter(MyState::Playing)))
-            .add_system(update_view.in_set(OnUpdate(MyState::Playing)))
             ;
     }
 }
@@ -70,7 +69,8 @@ impl Plugin for PlayerPlugin {
 
 const TILESIZE: i32 = 16;
 const POS_SPRITE: Point = Point{x:432/TILESIZE as i32, y:288/TILESIZE as i32};
-fn spawn_player(mut commands: Commands, 
+fn spawn_player(
+    mut commands: Commands, 
     textures: Res<TextureAssets>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
     mb: ResMut<MapBuilder>,
@@ -179,16 +179,6 @@ fn setup_status(
 
 }
 
-fn update_view(
-    mut query: Query<(Entity,  &mut Text)>,
-    my_status: ResMut<MyStatus>
-)
-{
-    for (_, mut text) in query.iter_mut()
-    {
-        text.sections[0].value = my_status.score.to_string();
-    }
-}
 
 fn get_item(
     mut commands: Commands, 
