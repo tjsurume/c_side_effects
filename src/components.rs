@@ -6,11 +6,11 @@ use crate::prelude::*;
 pub struct PlayerPlugin;
 
 #[derive(Component)]
-pub struct Player
-{
-    pub is_ghost : bool
+pub struct Player;
+#[derive(Resource)]
+pub struct PlayerStatus{
+    pub is_ghost : bool,
 }
-
 
 #[derive(Component)]
 pub struct Item;
@@ -65,10 +65,27 @@ impl Plugin for PlayerPlugin {
             .add_system(move_player.in_set(OnUpdate(MyState::Playing)))
             .add_system(spawn_item.in_schedule(OnEnter(MyState::Playing)))
             .add_system(get_item.in_set(OnUpdate(MyState::Playing)))
+            .add_system(view_update_player.in_set(OnUpdate(MyState::Playing)))
             ;
     }
 }
 
+
+fn view_update_player
+(
+    player_status : ResMut<PlayerStatus>,
+    mut player_query: Query<(&mut TextureAtlasSprite, &Player)>
+)   
+{   
+    for(mut sprite, _) in player_query.iter_mut(){
+        if player_status.is_ghost  == true{
+            sprite.color.set_a(0.3);
+        }else{
+            sprite.color.set_a(1.0);
+        }
+    }
+
+}
 
 const TILESIZE: i32 = 16;
 const POS_SPRITE: Point = Point{x:432/TILESIZE as i32, y:288/TILESIZE as i32};
@@ -106,7 +123,7 @@ fn spawn_player(
         Position { x: player_start.x, y: player_start.y, z: 2 },
         ),
         )
-        .insert(Player{ is_ghost : true});
+        .insert(Player);
 
 }
 
@@ -177,9 +194,10 @@ fn get_item(
 fn move_player(
     mut commands: Commands,
     keyboard_input: Res<Input<KeyCode>>,
-    player_position: Query<(Entity, &Position), With<Player>>,
+    mut use_status : ResMut<PlayerStatus>,
+    mut player_query : Query<(Entity, &Position, &mut Player)>
 ) {
-    let (player_ent, pos) = player_position.single();
+    let (player_ent, pos, mut player) = player_query.single();
     let key = keyboard_input.get_pressed().next().cloned();
 
     let mut new_position = pos.clone();
@@ -190,6 +208,7 @@ fn move_player(
             KeyCode::Right => new_position.x += 1,
             KeyCode::Down => new_position.y -= 1,
             KeyCode::Up => new_position.y += 1,
+            KeyCode::G => { use_status.is_ghost = !use_status.is_ghost; },
             _ => {}
         }
 

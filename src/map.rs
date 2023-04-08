@@ -73,7 +73,6 @@ pub fn spawn_map_tiles(
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
     textures: Res<TextureAssets>,
 ) {
-    println!("{:?}", mb.map.tiles);
     let texture_handle: Handle<Image> = textures.tilemap.clone();
 
     let texture_atlas = 

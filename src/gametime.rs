@@ -30,6 +30,7 @@ impl Plugin for GameTimePlugin{
     {
         app
             .insert_resource::<OurClock>(OurClock{ stock_seconds : 0., state: MyTimeState::Stop, stop_watch: Stopwatch::new()})
+            .insert_resource::<PlayerStatus>(PlayerStatus{ is_ghost : false})
             .add_system(print_game_time)
             .add_startup_system(setup_game_time)
             .add_system(update_delta_time.in_set(OnUpdate(MyTimeState::Playing)))
@@ -58,8 +59,6 @@ fn state_timer_management(
 
     match our_clock.state {
         MyTimeState::Ready => {
-            
-    println!("{:?}, {:?}", our_clock.stop_watch, our_clock.state);
             if our_clock.stop_watch.elapsed_secs() >= 5. {
                 our_clock.state = MyTimeState::Playing;
                 our_clock.stop_watch.reset();
@@ -84,10 +83,20 @@ fn state_timer_management(
 
 fn update_delta_time(
     time: Res<Time>,
-    mut our_clock: ResMut<OurClock>
+    mut our_clock: ResMut<OurClock>,
+    mut player_query: Query<(Entity, &mut Player)>,
+    mut player_status : ResMut<PlayerStatus>
 )
 {
-    our_clock.stop_watch.tick(time.delta());       
+    let mut speed_up = false;
+
+    speed_up  = player_status.is_ghost;
+
+    let mut delta_time = time.delta();
+    if speed_up {
+        delta_time *= 2;
+    }
+    our_clock.stop_watch.tick(delta_time);       
     
 }
 

@@ -6,6 +6,7 @@ pub fn movement(
     move_messages: Query<(Entity, &WantsToMove)>,
     mut movers: Query<(Entity, &mut Position, &mut Player)>,
     our_clock : ResMut<OurClock>,
+    player_status : ResMut<PlayerStatus>
 ) {
     // for every message to move
     for (message_ent, move_signal) in move_messages.iter() {
@@ -13,7 +14,7 @@ pub fn movement(
             if mb.map.can_enter_tile(move_signal.destination)  {                
                 if let Ok( (_, mut position, player)) = movers.get_mut(move_signal.entity) {  
                     let tile_state  = mb.map.tiles[map_idx(move_signal.destination.x, move_signal.destination.y)];
-                    if (tile_state == TileType::Wall) && (player.is_ghost == false ){
+                    if (tile_state == TileType::Wall) && (player_status.is_ghost == false ){
                         // nothing to do.
                     }else{ 
                         position.x = move_signal.destination.x;

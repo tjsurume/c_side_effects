@@ -29,7 +29,6 @@ pub fn set_movement_actions(mut actions: ResMut<Actions>, keyboard_input: Res<In
     );
 
     if player_movement != Vec2::ZERO {
-        println!("set_movement_actions");
         actions.player_movement = Some(player_movement.normalize());
     } else {
         actions.player_movement = None;
