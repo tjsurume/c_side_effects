@@ -139,6 +139,7 @@ fn update_key_game(
     keyboard_input: Res<Input<KeyCode>>,
     mut our_clock: ResMut<OurClock>,
     mut mb: ResMut<MapBuilder>,
+    mut player_status : ResMut<PlayerStatus>,
     mut mystatus: ResMut<MyStatus>,
     mut state: ResMut<NextState<MyState>>,
 ) {
@@ -151,6 +152,7 @@ fn update_key_game(
                     our_clock.state = MyTimeState::Ready;   
                     our_clock.stop_watch.reset();
                     mystatus.score = 0;
+                    player_status.is_ghost = false;
                     our_clock.stop_watch.unpause();
                     state.set(MyState::Next);
                 }

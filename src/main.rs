@@ -15,7 +15,7 @@ mod prelude {
     pub use bevy::prelude::*;
     pub const SCREEN_WIDTH: i32 = 80;
     pub const SCREEN_HEIGHT: i32 = 80;
-    pub const ITEM_NUM : i32 = 15;
+    pub const ITEM_NUM: i32 = 15;
 
     pub use bevy::winit::WinitSettings;
     pub use crate::map_builder::*;

@@ -12,6 +12,13 @@ pub struct ScoreStatusView;
 #[derive(Component)]
 pub struct MyTimeStateView;
 
+
+// fn window_resize_system(mut windows: ResMut<Windows>) {
+//     let window = windows.get_primary_mut().unwrap();
+//     println!("Window size was: {},{}", window.width(), window.height());
+//     window.set_resolution(1280, 720);
+// }
+
 impl Plugin for StatusViewPlugin{
     fn build(&self, app: &mut App)
     {
@@ -22,6 +29,7 @@ impl Plugin for StatusViewPlugin{
             .add_system(update_time_state_view.in_set(OnUpdate(MyState::Playing)))
             .add_system(spawn_cover_pic.in_schedule(OnEnter(MyState::Menu)))
             .add_system(despawn_cover_pic.in_schedule(OnExit(MyState::Menu)))
+
             ;
     }
 }
@@ -33,7 +41,7 @@ fn show_status_view(
 {
     let text_style = bevy::prelude::TextStyle {
         font: font_assets.fira_sans.clone(),
-        font_size: 36.0,
+        font_size: 16.0,
         color: Color::WHITE,
     };
 
@@ -86,9 +94,18 @@ fn show_status_view(
 }
 
 
-fn update_timer_status_view(
+fn setup_status_view(
+    mut commands: Commands,
+)
+{
+
+}
+    
+
+fn update_score_status_view(
     mut commands: Commands, 
     mut mystatus: ResMut<MyStatus>,
+    our_clock: ResMut<OurClock>,
     mut query: Query<(Entity, &mut Text, &mut Transform), With<TimerStatusView>>,
     mut camera_query: Query<&mut Transform, (With<MyGameCamera>, Without<TimerStatusView>)>,
 
@@ -97,16 +114,22 @@ fn update_timer_status_view(
     let mut camera_transform = camera_query.single_mut();
     
     for(_, mut text, mut transform) in query.iter_mut(){
-        text.sections[0].value = mystatus.score.to_string();
-    
-        transform.translation.x = camera_transform.translation.x - 100.;
-        transform.translation.y = camera_transform.translation.y - 100.;
+        
+        if our_clock.state != MyTimeState::Ready { 
+            text.sections[0].value = "Score : ".to_string() +  &mystatus.score.to_string();
+            
+        }else{
+            text.sections[0].value = "".to_string();
+            
+        }
+        transform.translation.x = camera_transform.translation.x - STATUS_START_X + 100.;
+        transform.translation.y = camera_transform.translation.y - STATUS_START_Y;
 
 
     }   
 }
 
-fn update_score_status_view(
+fn update_timer_status_view(
     mut commands: Commands, 
     our_clock: ResMut<OurClock>,
     mut query: Query<(Entity, &mut Text, &mut Transform), With<ScoreStatusView>>,
@@ -117,10 +140,24 @@ fn update_score_status_view(
     let mut camera_transform = camera_query.single_mut();
     
     for(_, mut text, mut transform) in query.iter_mut(){
-        text.sections[0].value = our_clock.stop_watch.elapsed_secs().floor().to_string();
+        let mut mytime = our_clock.stop_watch.elapsed_secs();
     
-        transform.translation.x = camera_transform.translation.x - 100.;
-        transform.translation.y = camera_transform.translation.y - 100.;
+        let mut view_time = 0.;
+        let mut enable_view = true;
+        match our_clock.state {
+            MyTimeState::Playing => view_time = 10. - mytime,
+            MyTimeState::Ready => view_time = 5. - mytime,
+            _ => enable_view = false,
+        }
+        if enable_view == true {
+            text.sections[0].value = "Time : ".to_string()  + &view_time.floor().to_string();
+        }else {
+            text.sections[0].value = "".to_string();
+            
+        }
+
+        transform.translation.x = camera_transform.translation.x - STATUS_START_X + 200.;
+        transform.translation.y = camera_transform.translation.y - STATUS_START_Y;
 
     
     }   
@@ -141,12 +178,12 @@ fn update_time_state_view(
         let state_label =  match our_clock.state {
             MyTimeState::Stop => "Stop",
             MyTimeState::Ready => "Ready",
-            MyTimeState::Playing => "Playing",
+            MyTimeState::Playing => "Go!!",
             MyTimeState::Result => "Result",
         };
         text.sections[0].value  = state_label.to_string();
-        transform.translation.x = camera_transform.translation.x - 100.;
-        transform.translation.y = camera_transform.translation.y - 120.;
+        transform.translation.x = camera_transform.translation.x - STATUS_START_X;
+        transform.translation.y = camera_transform.translation.y - STATUS_START_Y;
 
     }   
 }
