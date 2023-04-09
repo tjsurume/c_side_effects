@@ -42,4 +42,7 @@ pub struct TextureAssets {
     #[asset(path = "textures/tilemap_packed.png")]
     pub tilemap: Handle<Image>,
 
+    #[asset(path = "pictures/girl_in_the_forest.png")]
+    pub cover_pic: Handle<Image>,
+
 }

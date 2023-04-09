@@ -20,6 +20,8 @@ impl Plugin for StatusViewPlugin{
             .add_system(update_timer_status_view.in_set(OnUpdate(MyState::Playing)))
             .add_system(update_score_status_view.in_set(OnUpdate(MyState::Playing)))
             .add_system(update_time_state_view.in_set(OnUpdate(MyState::Playing)))
+            .add_system(spawn_cover_pic.in_schedule(OnEnter(MyState::Menu)))
+            .add_system(despawn_cover_pic.in_schedule(OnExit(MyState::Menu)))
             ;
     }
 }
@@ -147,4 +149,36 @@ fn update_time_state_view(
         transform.translation.y = camera_transform.translation.y - 120.;
 
     }   
+}
+
+#[derive(Component)]
+pub struct CoverPic;
+
+fn spawn_cover_pic(
+    mut commands: Commands, 
+    textures: Res<TextureAssets>
+    
+)
+{
+
+    commands
+        .spawn((SpriteBundle {
+            texture: textures.cover_pic.clone(),
+            transform: Transform::from_translation(Vec3::new(0., 0., 1.)),
+            ..Default::default()
+        }, CoverPic
+        ),
+        )
+        ;
+}
+
+fn despawn_cover_pic(
+    mut commands: Commands, 
+    textures: Res<TextureAssets>,
+    query: Query<Entity, With<CoverPic>>
+)
+{
+    for ent in query.iter(){
+        commands.entity(ent).despawn();
+    }
 }
