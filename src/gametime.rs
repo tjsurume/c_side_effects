@@ -126,12 +126,12 @@ fn setup_game_time(
 
 )
 {
-    commands.spawn(())
-        .insert(
-            GameTime(time.startup() + time.elapsed())
-        )
+    // commands.spawn(())
+    //     .insert(
+    //         GameTime(time.startup() + time.elapsed())
+    //     )
         
-        ;
+        // ;
 }
 
 fn update_key_game(
