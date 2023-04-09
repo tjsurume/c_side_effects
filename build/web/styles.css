@@ -4,11 +4,11 @@ body, html {
 
 body {
     background: repeating-linear-gradient(
-        135deg,
-        black 0,
-        black 2px,
-        white 2px,
-        white 20px
+        /* 135deg, */
+        /* black 0, */
+        /* black 2px, */
+        /* white 2px, */
+        /* white 20px */
     );
     margin: 0;
 }
@@ -22,7 +22,7 @@ body {
 }
 
 #bevy {
-    background-color: white;
-    width: 800px;
-    height: 600px;
+    background-color: black;
+    /* width: 800px; */
+    /* height: 600px; */
 }
