@@ -6,19 +6,8 @@ use super::MapArchitect;
 // use rltk::*;
 // use rltk::*;
 
-const FORTRESS : (&str, i32, i32) = ("
-------------
----######---
----#----#---
----#-M--#---
--###----###-
---M------M--
--###----###-
----#----#---
----#----#---
----######---
-------------
-", 12, 11);
+use rand::Rng;
+
 
 pub struct PrefabArchitect {}
 
@@ -48,23 +37,15 @@ impl PrefabArchitect
     {
 
 
-        let string_vec : Vec<char> = FORTRESS.0
-            .chars().filter(|a| *a != '\r' && *a !='\n')
-            .collect();
-        let mut i = 0;
-        for ty in 0 .. FORTRESS.2 {
-            for tx in  0 .. FORTRESS.1 {
-                let idx = map_idx(tx, ty);
-                let c = string_vec[i];
-                match c {
-                    'M' => {
-                        mb.map.tiles[idx] = TileType::Floor;
-                    }
-                    '-' => mb.map.tiles[idx] = TileType::Floor,
-                    '#' => mb.map.tiles[idx] = TileType::Wall,
-                    _ => println!("No idea what to do with [{}]", c)
-                }
-                i += 1;
+        let tile_array = [TileType::Floor, TileType::Wall];
+        let mut rng = rand::thread_rng();
+    
+        for tx in 0 .. SCREEN_WIDTH  {
+            for ty in 0 .. SCREEN_HEIGHT {
+                let tile_idx = map_idx(tx, ty);
+                let type_idx  = rng.gen_range(0..tile_array.len());
+                // println!("{}", idx);
+                mb.map.tiles[tile_idx] = tile_array[type_idx];
             }
         }
     }

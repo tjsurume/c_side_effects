@@ -119,7 +119,6 @@ pub fn spawn_map_tiles(
                                 SpriteSheetBundle {
                                     texture_atlas: texture_atlas_handle.clone(),
                                     sprite: TextureAtlasSprite::new((10*POS_SPRITE.x +22)  as usize),
-                                    transform: Transform::from_translation(Vec3::new(100., 0., 1.)),
                                     ..default()
                                 },
                             ));

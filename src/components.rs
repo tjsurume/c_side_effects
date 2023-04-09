@@ -151,8 +151,8 @@ fn spawn_item(
     
     
     let mut rng = rand::thread_rng();
-    for _ in 0..10 {
-        let noise = rng.gen_range(0..100);
+    for _ in 0..ITEM_NUM as i32 {
+        let noise = rng.gen_range(0..SCREEN_HEIGHT * SCREEN_WIDTH);
         commands.spawn((
             SpriteSheetBundle 
             {
@@ -162,7 +162,7 @@ fn spawn_item(
                 ..default()
             },
             TileSize::square(1.0),
-            Position { x: noise / 10, y : noise % 10, z: 2 },
+            Position { x: noise / SCREEN_WIDTH, y : noise % SCREEN_WIDTH, z: 2 },
             ),
             )
             .insert(Item);
