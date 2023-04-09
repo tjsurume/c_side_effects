@@ -27,13 +27,15 @@ mod prelude {
     
     pub const SCREEN_WIDTH: i32 = 30;
     pub const SCREEN_HEIGHT: i32 = 30;
-    pub const ITEM_NUM : i32 = 15;
+    pub const ITEM_NUM : i32 = 30;
     pub const WINDOW_WIDTH: f32 = 800.;
     pub const WINDOW_HEIGHT: f32 = 600.;
     
     pub const STATUS_START_X:f32 = (WINDOW_WIDTH / 2.) - 150.;
     pub const STATUS_START_Y:f32 = (WINDOW_HEIGHT / 2.) - 150.;
 
+
+    pub const PLAYING_TIME : f32 = 20.;
 
     pub use bevy::winit::WinitSettings;
     pub use crate::map_builder::*;

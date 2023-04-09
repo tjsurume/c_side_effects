@@ -37,6 +37,7 @@ impl Plugin for GameTimePlugin{
             .add_system(popup_ready.in_schedule(OnEnter(MyState::Playing)))
             .add_system(state_timer_management)
             .add_system(update_key_game)
+            .add_system(next_to_replay.in_schedule(OnEnter(MyState::Next)))
             ;
     }   
 }
@@ -66,8 +67,8 @@ fn state_timer_management(
             }          
         },
         MyTimeState::Playing => {
-            if our_clock.stop_watch.elapsed_secs() >= 10. {
-                our_clock.state = MyTimeState::Stop;   
+            if our_clock.stop_watch.elapsed_secs() >= PLAYING_TIME {
+                our_clock.state = MyTimeState::Result;   
                 our_clock.stop_watch.reset();
                 our_clock.stop_watch.pause();
             }
@@ -148,7 +149,7 @@ fn update_key_game(
     if let Some(key) = key {
         match key {
             KeyCode::R => {
-                if our_clock.state == MyTimeState::Stop {
+                if our_clock.state == MyTimeState::Result {
                     our_clock.state = MyTimeState::Ready;   
                     our_clock.stop_watch.reset();
                     mystatus.score = 0;
@@ -157,10 +158,16 @@ fn update_key_game(
                     state.set(MyState::Next);
                 }
             }
-            KeyCode::X => {
-                state.set(MyState::Playing);
-            }
             _ => {}
         }
     }
+}
+
+
+fn next_to_replay
+(
+    mut state: ResMut<NextState<MyState>>,
+)
+{
+    state.set(MyState::Playing);
 }

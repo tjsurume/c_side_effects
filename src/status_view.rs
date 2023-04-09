@@ -13,11 +13,8 @@ pub struct ScoreStatusView;
 pub struct MyTimeStateView;
 
 
-// fn window_resize_system(mut windows: ResMut<Windows>) {
-//     let window = windows.get_primary_mut().unwrap();
-//     println!("Window size was: {},{}", window.width(), window.height());
-//     window.set_resolution(1280, 720);
-// }
+#[derive(Component)]
+pub struct MyGuide;
 
 impl Plugin for StatusViewPlugin{
     fn build(&self, app: &mut App)
@@ -29,7 +26,9 @@ impl Plugin for StatusViewPlugin{
             .add_system(update_time_state_view.in_set(OnUpdate(MyState::Playing)))
             .add_system(spawn_cover_pic.in_schedule(OnEnter(MyState::Menu)))
             .add_system(despawn_cover_pic.in_schedule(OnExit(MyState::Menu)))
-
+            .add_system(update_guide.in_set(OnUpdate(MyState::Playing)))
+            .add_system(update_guide_next.in_set(OnUpdate(MyState::Next)))
+            
             ;
     }
 }
@@ -90,6 +89,19 @@ fn show_status_view(
     commands.spawn((score_text, MyTimeStateView));
 
 
+    let my_guide = Text2dBundle {
+        text: Text::from_section(
+            "hello bevy!",
+            text_style.clone(),
+        ),
+        transform: Transform {
+            translation: Vec3::from((-100f32, 130f32, 2f32)),
+            rotation: Quat::from_rotation_z(0.0f32),
+            scale: Vec3::new(1f32, 1f32, 1f32),
+        },
+        ..default()
+    };
+    commands.spawn((my_guide, MyGuide));
 
 }
 
@@ -128,7 +140,6 @@ fn update_score_status_view(
 
     }   
 }
-
 fn update_timer_status_view(
     mut commands: Commands, 
     our_clock: ResMut<OurClock>,
@@ -145,12 +156,13 @@ fn update_timer_status_view(
         let mut view_time = 0.;
         let mut enable_view = true;
         match our_clock.state {
-            MyTimeState::Playing => view_time = 10. - mytime,
+            MyTimeState::Playing => view_time = PLAYING_TIME - mytime,
             MyTimeState::Ready => view_time = 5. - mytime,
             _ => enable_view = false,
         }
         if enable_view == true {
-            text.sections[0].value = "Time : ".to_string()  + &view_time.floor().to_string();
+            text.sections[0].value = "Time : ".to_string()  + &format!("{view_time:.2}");//&view_time.to_string();
+            
         }else {
             text.sections[0].value = "".to_string();
             
@@ -187,6 +199,42 @@ fn update_time_state_view(
 
     }   
 }
+
+fn update_guide(
+    our_clock: ResMut<OurClock>,
+    mut query: Query<(Entity, &mut Text, &mut Transform), With<MyGuide>>,
+    mut camera_query: Query<&mut Transform, (With<MyGameCamera>, Without<MyGuide>)>,
+)
+{
+    let mut camera_transform = camera_query.single_mut();
+    for(_, mut text, mut transform) in query.iter_mut(){
+        let state_label =  match our_clock.state {
+            MyTimeState::Stop => "",
+            MyTimeState::Ready => "",
+            MyTimeState::Playing => "Press <G> Toggle Ghost, <Cursor> Move",
+            MyTimeState::Result => "Press <R> Restart",
+        };
+        text.sections[0].value  = state_label.to_string();
+        transform.translation.x = camera_transform.translation.x - STATUS_START_X + 350.;
+        transform.translation.y = camera_transform.translation.y - STATUS_START_Y;
+    }
+}
+
+fn update_guide_next(
+    our_clock: ResMut<OurClock>,
+    mut query: Query<(Entity, &mut Text, &mut Transform), With<MyGuide>>,
+    mut camera_query: Query<&mut Transform, (With<MyGameCamera>, Without<MyGuide>)>,
+)
+{
+    let mut camera_transform = camera_query.single_mut();
+    for(_, mut text, mut transform) in query.iter_mut(){
+        let state_label = "Press <X> to restart.".to_string();
+        text.sections[0].value  = state_label.to_string();
+        transform.translation.x = camera_transform.translation.x - STATUS_START_X + 350.;
+        transform.translation.y = camera_transform.translation.y - STATUS_START_Y;
+    }
+}
+
 
 #[derive(Component)]
 pub struct CoverPic;

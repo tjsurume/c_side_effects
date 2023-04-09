@@ -15,7 +15,7 @@ mod prelude {
     pub use bevy::prelude::*;
     pub const SCREEN_WIDTH: i32 = 80;
     pub const SCREEN_HEIGHT: i32 = 80;
-    pub const ITEM_NUM: i32 = 15;
+    pub const ITEM_NUM: i32 = 30;
 
     pub use bevy::winit::WinitSettings;
     pub use crate::map_builder::*;
@@ -40,7 +40,8 @@ use prelude::*;
 
 fn main() {
     App::new()
-        .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
+        .insert_resource(ClearColor(Color::rgb(0.0, 0.4, 0.8)))
+        // .insert_resource(ClearColor(Color::rgb(0.4, 0.4, 0.4)))
         // .add_plugins(DefaultPlugins.set(
         //     WindowPlugin {
         //         primary_window: Some(Window {
