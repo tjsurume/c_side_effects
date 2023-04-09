@@ -1,6 +1,6 @@
 use std::time::{Instant, Duration};
 use bevy::{input::keyboard::KeyboardInput, text::{BreakLineOn, Text2dBounds}};
-use crate::prelude::*;
+use crate::{prelude::*, map_builder};
 use bevy::time::Stopwatch;
 
 #[derive(Component)]
@@ -36,6 +36,7 @@ impl Plugin for GameTimePlugin{
             .add_system(update_delta_time.in_set(OnUpdate(MyTimeState::Playing)))
             .add_system(popup_ready.in_schedule(OnEnter(MyState::Playing)))
             .add_system(state_timer_management)
+            .add_system(update_key_game)
             ;
     }   
 }
@@ -131,4 +132,33 @@ fn setup_game_time(
         )
         
         ;
+}
+
+fn update_key_game(
+    mut commands: Commands,
+    keyboard_input: Res<Input<KeyCode>>,
+    mut our_clock: ResMut<OurClock>,
+    mut mb: ResMut<MapBuilder>,
+    mut mystatus: ResMut<MyStatus>,
+    mut state: ResMut<NextState<MyState>>,
+) {
+    let key = keyboard_input.get_pressed().next().cloned();
+
+    if let Some(key) = key {
+        match key {
+            KeyCode::R => {
+                if our_clock.state == MyTimeState::Stop {
+                    our_clock.state = MyTimeState::Ready;   
+                    our_clock.stop_watch.reset();
+                    mystatus.score = 0;
+                    our_clock.stop_watch.unpause();
+                    state.set(MyState::Next);
+                }
+            }
+            KeyCode::X => {
+                state.set(MyState::Playing);
+            }
+            _ => {}
+        }
+    }
 }

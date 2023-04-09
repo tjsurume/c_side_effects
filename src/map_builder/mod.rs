@@ -26,9 +26,32 @@ impl MapBuilder {
         self.map.tiles.iter_mut().for_each(|t| *t = tile);
     }
 
+
 }
 
+pub fn renew_map(
+    mut commands: Commands,
+    mb: ResMut<MapBuilder>,
+    state: ResMut<NextState<MyState>>,
+    mut query: Query<Entity, With<MapTile>>,
+    mut item_query : Query<(Entity, With<Item>), Without<MapTile>>
 
+)
+{
+
+    for (ent) in query.iter() {
+        commands.entity(ent).despawn();
+    }
+
+    for (ent, _) in item_query.iter() {
+       println!("despawn item!!");
+        commands.entity(ent).despawn();
+        
+    }
+    commands.remove_resource::<MapBuilder>();
+    build_map(commands);
+
+}
 
 pub fn build_map(
     mut commands: Commands,
@@ -50,6 +73,12 @@ impl Plugin for MapPlugin
         )
         .add_system(
             spawn_map_tiles.in_schedule(OnExit(MyState::Loading))
+        )
+        .add_system(
+            renew_map.in_schedule(OnEnter(MyState::Next))
+        )
+        .add_system(
+            spawn_map_tiles.in_schedule(OnExit(MyState::Next))
         )
         ;
     }

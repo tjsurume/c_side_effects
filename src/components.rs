@@ -61,9 +61,10 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app
             .insert_resource::<MyStatus>( MyStatus{ score : 0, time : 0})
-            .add_system(spawn_player.in_schedule(OnEnter(MyState::Playing)))
+            .add_system(spawn_player.in_schedule(OnExit(MyState::Loading)))
             .add_system(move_player.in_set(OnUpdate(MyState::Playing)))
-            .add_system(spawn_item.in_schedule(OnEnter(MyState::Playing)))
+            .add_system(spawn_item.in_schedule(OnExit(MyState::Next)))
+            .add_system(spawn_item.in_schedule(OnExit(MyState::Loading)))
             .add_system(get_item.in_set(OnUpdate(MyState::Playing)))
             .add_system(view_update_player.in_set(OnUpdate(MyState::Playing)))
             ;

@@ -12,4 +12,5 @@ pub enum MyState {
     Playing,
     // Here the menu is drawn and waiting for player interaction
     Menu,
+    Next,
 }
