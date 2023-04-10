@@ -111,17 +111,20 @@ fn spawn_player(
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
     
     let player_start = mb.player_start;
+    let mut rng = rand::thread_rng();
+    let noise = rng.gen_range(0..SCREEN_HEIGHT * SCREEN_WIDTH);
+
     commands.spawn((
 
         // },
         SpriteSheetBundle {
             texture_atlas: texture_atlas_handle,
-            sprite: TextureAtlasSprite::new(24),
+            sprite: TextureAtlasSprite::new(3*POS_SPRITE.x as usize + 24),
             transform: Transform::from_translation(Vec3::new(100., 0., 1.)),
             ..default()
         },
         TileSize::square(1.0),
-        Position { x: player_start.x, y: player_start.y, z: 2 },
+        Position { x: noise / SCREEN_WIDTH, y: noise % SCREEN_WIDTH, z: 2 },
         ),
         )
         .insert(Player);

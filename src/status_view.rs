@@ -46,7 +46,7 @@ fn show_status_view(
 
     let score_text = Text2dBundle {
         text: Text::from_section(
-            "hello bevy!",
+            "",
             text_style.clone(),
         ),
         transform: Transform {
@@ -61,7 +61,7 @@ fn show_status_view(
 
     let score_text = Text2dBundle {
         text: Text::from_section(
-            "hello bevy!",
+            "",
             text_style.clone(),
         ),
         transform: Transform {
@@ -76,7 +76,7 @@ fn show_status_view(
 
     let score_text = Text2dBundle {
         text: Text::from_section(
-            "hello bevy!",
+            "",
             text_style.clone(),
         ),
         transform: Transform {
@@ -91,7 +91,7 @@ fn show_status_view(
 
     let my_guide = Text2dBundle {
         text: Text::from_section(
-            "hello bevy!",
+            "",
             text_style.clone(),
         ),
         transform: Transform {
