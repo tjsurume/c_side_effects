@@ -202,7 +202,7 @@ fn move_player(
     mut player_query : Query<(Entity, &Position, &mut Player)>
 ) {
     let (player_ent, pos, mut player) = player_query.single();
-    let key = keyboard_input.get_pressed().next().cloned();
+    let key = keyboard_input.get_just_pressed().next().cloned();
 
     let mut new_position = pos.clone();
 

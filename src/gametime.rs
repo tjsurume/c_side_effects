@@ -144,7 +144,7 @@ fn update_key_game(
     mut mystatus: ResMut<MyStatus>,
     mut state: ResMut<NextState<MyState>>,
 ) {
-    let key = keyboard_input.get_pressed().next().cloned();
+    let key = keyboard_input.get_just_pressed().next().cloned();
 
     if let Some(key) = key {
         match key {
