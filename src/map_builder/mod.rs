@@ -44,7 +44,6 @@ pub fn renew_map(
     }
 
     for (ent, _) in item_query.iter() {
-       println!("despawn item!!");
         commands.entity(ent).despawn();
         
     }
