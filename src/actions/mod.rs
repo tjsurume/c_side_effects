@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-use crate::actions::game_control::{get_movement, GameControl};
+use crate::actions::game_control::{get_movement};
 
 mod game_control;
 
@@ -18,6 +18,8 @@ impl Plugin for ActionsPlugin {
 #[derive(Default, Resource)]
 pub struct Actions {
     pub player_movement: Option<Vec2>,
+    pub item_got: Option<bool>,
+    pub scene_changed: Option<MyTimeState>
 }
 
 pub fn set_movement_actions(mut actions: ResMut<Actions>, keyboard_input: Res<Input<KeyCode>>) {

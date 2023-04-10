@@ -1,10 +1,4 @@
 use crate::prelude::*;
-pub enum GameControl {
-    Up,
-    Down,
-    Left,
-    Right,
-}
 
 impl GameControl {
     pub fn pressed(&self, keyboard_input: &Res<Input<KeyCode>>) -> bool {

@@ -1,6 +1,7 @@
 use std::time::{Instant, Duration};
 use bevy::{input::keyboard::KeyboardInput, text::{BreakLineOn, Text2dBounds}};
 use crate::{prelude::*, map_builder};
+
 use bevy::time::Stopwatch;
 
 #[derive(Component)]
@@ -9,28 +10,12 @@ struct GameTime(Instant);
 pub struct GameTimePlugin;
 
 
-#[derive(States, Default, Clone, Eq, PartialEq, Debug, Hash)]
-pub enum MyTimeState {
-    #[default]
-    Stop,
-    Ready,
-    Playing,
-    Result,
-}
-
-#[derive(Default, Resource)]
-pub struct OurClock {
-    pub stock_seconds: f32,
-    pub state : MyTimeState,
-    pub stop_watch : Stopwatch
-}
-
 impl Plugin for GameTimePlugin{
     fn build(&self, app: &mut App)
     {
         app
             .insert_resource::<OurClock>(OurClock{ stock_seconds : 0., state: MyTimeState::Stop, stop_watch: Stopwatch::new()})
-            .insert_resource::<PlayerStatus>(PlayerStatus{ is_ghost : false})
+            .insert_resource::<PlayerStatus>(PlayerStatus{ is_ghost : false, direction: GameControl::Down})
             .add_system(print_game_time)
             .add_startup_system(setup_game_time)
             .add_system(update_delta_time.in_set(OnUpdate(MyTimeState::Playing)))
@@ -44,18 +29,21 @@ impl Plugin for GameTimePlugin{
 
 
 fn popup_ready(
-    mut our_clock: ResMut<OurClock>
+    mut our_clock: ResMut<OurClock>,
+        mut actions: ResMut<Actions>,
 )
 {
     println!("Ready");
     our_clock.stop_watch.reset();
     our_clock.state = MyTimeState::Ready;
+    actions.scene_changed = Some(MyTimeState::Ready);
 }
 
 
 
 fn state_timer_management(
-    mut our_clock: ResMut<OurClock>
+    mut our_clock: ResMut<OurClock>,
+    mut actions: ResMut<Actions>, 
 )
 {
 
@@ -64,6 +52,7 @@ fn state_timer_management(
             if our_clock.stop_watch.elapsed_secs() >= 5. {
                 our_clock.state = MyTimeState::Playing;
                 our_clock.stop_watch.reset();
+                actions.scene_changed =Some(MyTimeState::Playing);
             }          
         },
         MyTimeState::Playing => {
@@ -71,6 +60,7 @@ fn state_timer_management(
                 our_clock.state = MyTimeState::Result;   
                 our_clock.stop_watch.reset();
                 our_clock.stop_watch.pause();
+                actions.scene_changed =Some(MyTimeState::Result);
             }
 
         },
@@ -143,6 +133,7 @@ fn update_key_game(
     mut player_status : ResMut<PlayerStatus>,
     mut mystatus: ResMut<MyStatus>,
     mut state: ResMut<NextState<MyState>>,
+    mut actions: ResMut<Actions>,
 ) {
     let key = keyboard_input.get_just_pressed().next().cloned();
 
@@ -151,6 +142,7 @@ fn update_key_game(
             KeyCode::R => {
                 if our_clock.state == MyTimeState::Result {
                     our_clock.state = MyTimeState::Ready;   
+                    actions.scene_changed = Some(MyTimeState::Ready);
                     our_clock.stop_watch.reset();
                     mystatus.score = 0;
                     player_status.is_ghost = false;

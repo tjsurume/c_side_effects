@@ -1,3 +1,5 @@
+use rand::{thread_rng, Rng};
+
 use crate::prelude::*;
 // use rltk::*;
 // use rltk::Point;
@@ -67,6 +69,30 @@ pub fn map_idx(x: i32, y: i32) -> usize {
 const TILESIZE: i32 = 16;
 const POS_SPRITE: Point = Point{x:432/TILESIZE as i32, y:288/TILESIZE as i32};
 
+
+pub enum WallIndices   {
+    Tree =  (10*POS_SPRITE.x +22) as isize, // tree
+    Basket = (13*POS_SPRITE.x + 5) as isize, // basket
+
+
+    //
+}
+
+const arr_walls: [i32; 10]  = [
+    (8*POS_SPRITE.x +22), // Tree
+    (8*POS_SPRITE.x +22), // Tree
+    (8*POS_SPRITE.x +22), // Tree
+    (8*POS_SPRITE.x +22), // Tree
+
+    (8*POS_SPRITE.x +22), // Tree
+    (9*POS_SPRITE.x + 22), // Tree2
+    (10*POS_SPRITE.x + 22), // Tree3
+    (10*POS_SPRITE.x + 21), // Tree4
+    
+    (10*POS_SPRITE.x + 6), // basket
+    (9*POS_SPRITE.x + 7),
+];
+
 pub fn spawn_map_tiles(
     mut commands: Commands,
     mb: Res<MapBuilder>,
@@ -88,10 +114,11 @@ pub fn spawn_map_tiles(
     );
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
-
+    let mut rng = thread_rng();
     for y in 0..SCREEN_HEIGHT {
         for x in 0..SCREEN_WIDTH {
             
+            let idx_arr_walls = rng.gen_range(0..arr_walls.len());
             commands
             .spawn(
             SpriteSheetBundle {
@@ -118,7 +145,7 @@ pub fn spawn_map_tiles(
                                 Position { x, y, z: 0 },
                                 SpriteSheetBundle {
                                     texture_atlas: texture_atlas_handle.clone(),
-                                    sprite: TextureAtlasSprite::new((10*POS_SPRITE.x +22)  as usize),
+                                    sprite: TextureAtlasSprite::new(arr_walls[idx_arr_walls] as usize),
                                     ..default()
                                 },
                             ));

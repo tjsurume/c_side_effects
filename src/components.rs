@@ -10,6 +10,7 @@ pub struct Player;
 #[derive(Resource)]
 pub struct PlayerStatus{
     pub is_ghost : bool,
+    pub direction : GameControl,
 }
 
 #[derive(Component)]
@@ -67,6 +68,7 @@ impl Plugin for PlayerPlugin {
             .add_system(spawn_item.in_schedule(OnExit(MyState::Loading)))
             .add_system(get_item.in_set(OnUpdate(MyState::Playing)))
             .add_system(view_update_player.in_set(OnUpdate(MyState::Playing)))
+            
             ;
     }
 }
@@ -84,8 +86,25 @@ fn view_update_player
         }else{
             sprite.color.set_a(1.0);
         }
-    }
 
+
+        match player_status.direction {
+            GameControl::Up => {
+                sprite.index = 3*POS_SPRITE.x as usize + 25;
+            }
+            GameControl::Left => {
+                sprite.index = 3*POS_SPRITE.x as usize + 23;
+            }
+            GameControl::Right => {
+                sprite.index = 3*POS_SPRITE.x as usize + 26;
+            }
+            GameControl::Down => {
+                sprite.index=  3*POS_SPRITE.x as usize + 24;
+            }
+            _=> {}
+        }
+
+    }
 }
 
 const TILESIZE: i32 = 16;
@@ -179,16 +198,19 @@ fn spawn_item(
 fn get_item(
     mut commands: Commands, 
     mut mystatus: ResMut<MyStatus>,
+    mut actions: ResMut<Actions>,
     query : Query<(Entity, &Position), With<Item>>,
     player_position: Query<(Entity, &Position), With<Player>>,
 ){
 
     let (_, player_pos) = player_position.single();
+    actions.item_got = None;
     for(ent, position) in query.iter(){
 
         if position == player_pos {
             commands.entity(ent).despawn();
             mystatus.score += 1;
+            actions.item_got = Some(true);
         }
     }
 
@@ -208,10 +230,23 @@ fn move_player(
 
     if let Some(key) = key {
         match key {
-            KeyCode::Left => new_position.x -= 1,
-            KeyCode::Right => new_position.x += 1,
-            KeyCode::Down => new_position.y -= 1,
-            KeyCode::Up => new_position.y += 1,
+            KeyCode::Left => {
+                new_position.x -= 1;
+                use_status.direction = GameControl::Left;
+            },
+
+            KeyCode::Right => {
+                new_position.x += 1;
+                use_status.direction = GameControl::Right;
+            }
+            KeyCode::Down => {
+                new_position.y -= 1;
+                use_status.direction = GameControl::Down;
+            }
+            KeyCode::Up => {
+                new_position.y += 1;
+                use_status.direction = GameControl::Up;
+            }
             KeyCode::G => { use_status.is_ghost = !use_status.is_ghost; },
             _ => {}
         }
