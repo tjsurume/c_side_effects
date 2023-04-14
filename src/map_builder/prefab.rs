@@ -44,7 +44,6 @@ impl PrefabArchitect
             for ty in 0 .. SCREEN_HEIGHT {
                 let tile_idx = map_idx(tx, ty);
                 let type_idx  = rng.gen_range(0..tile_array.len());
-                // println!("{}", idx);
                 mb.map.tiles[tile_idx] = tile_array[type_idx];
             }
         }

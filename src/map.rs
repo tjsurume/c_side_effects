@@ -124,7 +124,7 @@ pub fn spawn_map_tiles(
             SpriteSheetBundle {
                 texture_atlas: texture_atlas_handle.clone(),
                 sprite: TextureAtlasSprite::new((1*POS_SPRITE.x +1)  as usize),
-                transform: Transform::from_translation(Vec3::new(100., 0., 0.3)),
+                // transform: Transform::from_translation(Vec3::new(100., 0., 0.3)),
                 ..default()
             },
             )
@@ -142,7 +142,7 @@ pub fn spawn_map_tiles(
                             .spawn((
                                 MapTile,
                                 TileSize::square(1.0),
-                                Position { x, y, z: 0 },
+                                Position { x, y, z: 1 },
                                 SpriteSheetBundle {
                                     texture_atlas: texture_atlas_handle.clone(),
                                     sprite: TextureAtlasSprite::new(arr_walls[idx_arr_walls] as usize),
